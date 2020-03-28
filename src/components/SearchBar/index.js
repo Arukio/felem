@@ -4,6 +4,9 @@ import styled from "styled-components";
 const Container = styled.div`
   flex: 1;
   display: flex;
+  position: sticky;
+  top: 0.875rem;
+  z-index: 3;
 `;
 
 const Wrapper = styled.label`
@@ -47,11 +50,16 @@ const Input = styled.input`
   }
 `;
 
-const SearchBar = () => (
+const SearchBar = ({ value, onChange }) => (
   <Container>
     <Wrapper>
       <Loupe />
-      <Input placeholder="Cari film " />
+      <Input
+        placeholder="Cari film "
+        autoFocus={true}
+        value={value}
+        onChange={onChange}
+      />
     </Wrapper>
   </Container>
 );
