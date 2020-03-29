@@ -1,40 +1,48 @@
-/*eslint-disable */
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useEffect } from "react";
+import useFetch from 'react-fetch-hook'
 
-const useFetchData = search => {
-  const [response, setResponse] = useState(null);
-  const [error, setError] = useState(null);
+import Card from '../../components/Card'
+import { useInView } from "react-intersection-observer";
 
-  const base = "https://api.themoviedb.org/3";
-  const key = "88ef16f0da1b0867a47e0845eb3f74c9";
+const getUrlData = (search, page) => {
+  const base = 'https://api.themoviedb.org/3'
+	const api = '88ef16f0da1b0867a47e0845eb3f74c9'
+	return ([
+		`${base}/search/movie`,
+    `?api_key=${api}`,
+    `&language=id`,
+		`&query=${search}`,
+		`&page=${page}`,
+	])
+}
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(
-          `${base}/search/movie/?api_key=${key}&query=${search}`
-        );
-        const json = await res.json();
-        setResponse(json);
-      } catch (error) {
-        setError(error);
-      }
-    };
-    fetchData();
-  }, []);
-  return { response, error };
-};
+const InfiniteScroll = ({page, setPage}) => {
+	useEffect(() => setPage(page + 1))
+	return null
+}
 
-const Result = ({ search }) => {
-  const { response } = useFetchData("");
+const Result = ({ search, page, isLastpage, setPage }) => {
+  const { isLoading, data} = useFetch(getUrlData(search, page).join(""))
+  const [ref, inView] = useInView()
 
-  if (!response) {
-    return <h1>Loading..</h1>;
-  }
+  if(isLoading) return ( Array(20).fill(0).map((x, i) => (
+    <Card />
+  )))
 
-  console.log(response);
+  if(!data.results.length) return null
 
-  return <Fragment />;
+  const totalPages = data.total_pages
+
+  return (
+    <Fragment>
+      {data.results.map(entry => (
+        <Card {...entry} />
+      ))}
+      {isLastpage && totalPages && totalPages > page && (
+        <div ref={ref} >{inView && <InfiniteScroll page={page} setPage={setPage} />}</div>
+      )}
+    </Fragment>
+  )
 };
 
 export default Result;
