@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const Wrapper = styled.div`
   background: none;

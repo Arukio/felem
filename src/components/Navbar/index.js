@@ -9,6 +9,7 @@ const StickyNav = styled.div`
   z-index: 2;
   margin: 0.5rem auto;
   padding: 0px 1rem;
+	background: ${p => p.theme.colors.dark};
 `;
 
 const Logo = styled.a`
